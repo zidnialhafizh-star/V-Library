@@ -1,0 +1,410 @@
+<!DOCTYPE html>
+<html lang="id">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Katalog buku V-Library - cari buku berdasarkan genre dan cek ketersediaan stok">
+    <title>V-Library | Katalog Buku</title>
+
+    <link rel="icon" type="image/png" href="../foto/logo/logo-v-library.png">
+    <link rel="stylesheet" href="../css/dasar.css">
+    <link rel="stylesheet" href="../css/header.css">
+    <link rel="stylesheet" href="../css/komponen.css">
+    <link rel="stylesheet" href="../css/footer.css">
+    <link rel="stylesheet" href="../css/halaman/katalog-buku.css">
+
+    <script defer src="../js/shared/config.js"></script>
+    <script defer src="../js/shared/util.js"></script>
+    <script defer src="../js/shared/sha256.js"></script>
+    <script defer src="../js/shared/akun.js"></script>
+    <script defer src="../js/shared/buku.js"></script>
+    <script defer src="../js/shared/pinjaman.js"></script>
+    <script defer src="../js/shared/layout.js"></script>
+    <script defer src="../js/halaman/katalog-buku.js"></script>
+</head>
+
+<body>
+    <a class="skip-link" href="#konten-utama">Lewati ke konten utama</a>
+
+    <header class="site-header">
+        <div class="container header-inner">
+            <a class="brand" href="index.html">
+                <img class="brand-logo" src="../foto/logo/logo-v-library.png" alt="Logo V-Library" width="54" height="43">
+                <span class="brand-text">
+                    <strong>V-Library</strong>
+                    <small>Sistem Manajemen Perpustakaan</small>
+                </span>
+            </a>
+
+            <button class="nav-toggle" type="button" aria-expanded="false" aria-controls="header-panel"
+                aria-label="Buka menu">
+                <span></span>
+                <span></span>
+                <span></span>
+            </button>
+
+            <div class="header-panel" id="header-panel">
+                <nav class="main-nav" aria-label="Navigasi utama">
+                    <ul>
+                        <li><a href="index.html">Beranda</a></li>
+                        <li><a href="katalog-buku.html" aria-current="page">Katalog Buku</a></li>
+                        <li data-tampil="tamu"><a href="peminjaman.html">Peminjaman</a></li>
+                        <li class="has-dropdown" data-tampil="pengguna" hidden>
+                            <button class="nav-dropdown-toggle" type="button" aria-expanded="false" aria-controls="menu-layanan">
+                                Layanan <span class="nav-caret" aria-hidden="true"></span>
+                            </button>
+                            <ul class="dropdown-menu" id="menu-layanan">
+                                <li><a href="peminjaman.html">Peminjaman</a></li>
+                                <li><a href="riwayat.html">Riwayat</a></li>
+                            </ul>
+                        </li>
+                        <li data-tampil="petugas" hidden><a href="dashboard-petugas.html">Dashboard</a></li>
+                        <li class="has-dropdown" data-tampil="petugas" hidden>
+                            <button class="nav-dropdown-toggle" type="button" aria-expanded="false" aria-controls="menu-layanan-petugas">
+                                Layanan <span class="nav-caret" aria-hidden="true"></span>
+                            </button>
+                            <ul class="dropdown-menu" id="menu-layanan-petugas">
+                                <li><a href="manajemen-buku.html">Manajemen Buku</a></li>
+                                <li><a href="manajemen-pengguna.html">Manajemen Pengguna</a></li>
+                                <li><a href="manajemen-pinjaman.html">Manajemen Pinjaman</a></li>
+                                <li><a href="manajemen-perpanjang.html">Manajemen Perpanjang</a></li>
+                            </ul>
+                        </li>
+                        <li><a href="tentang-kami.html">Tentang Kami</a></li>
+                    </ul>
+                </nav>
+
+                <div class="auth-actions">
+                    <a class="button button-outline" href="masuk.html" data-tampil="tamu">Masuk</a>
+                    <a class="button button-light" href="daftar.html" data-tampil="tamu">Daftar</a>
+
+                    <div class="account-chip" data-tampil="pengguna petugas" hidden>
+                        <span class="account-avatar" aria-hidden="true" data-akun="inisial"></span>
+                        <span class="account-info">
+                            <strong class="account-name" data-akun="nama"></strong>
+                            <small class="account-role" data-akun="peran"></small>
+                        </span>
+                    </div>
+                    <button class="button button-outline" type="button" data-aksi="keluar"
+                        data-tampil="pengguna petugas" hidden>Keluar</button>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <main id="konten-utama">
+        <section class="page-hero" aria-labelledby="page-title">
+            <img class="page-hero-bg" src="../foto/latar/perpustakaan-surabaya.webp" alt="" width="900" height="500" decoding="async">
+            <div class="container page-hero-inner">
+                <h1 id="page-title">Katalog Buku</h1>
+                <p>
+                    Temukan buku berdasarkan genre dan cek ketersediaan stoknya
+                    sebelum mengajukan peminjaman.
+                </p>
+            </div>
+        </section>
+
+        <section class="container catalog-main" aria-labelledby="catalog-title">
+            <h2 id="catalog-title" class="sr-only">Daftar buku</h2>
+
+            <div class="catalog-toolbar">
+                <form id="catalog-search" class="search-form" role="search" action="katalog-buku.html" method="get">
+                    <label class="sr-only" for="catalog-query">
+                        Cari berdasarkan judul, penulis, atau genre
+                    </label>
+                    <input id="catalog-query" name="q" type="search" autocomplete="off"
+                        placeholder="Judul buku, penulis, atau genre...">
+                    <button type="submit">Cari</button>
+                </form>
+
+                <fieldset class="genre-filter" id="genre-filter">
+                    <legend class="sr-only">Filter genre</legend>
+                    <button type="button" class="genre-chip" data-genre="Semua" aria-pressed="true">Semua <span class="genre-chip-count">11</span></button>
+                    <button type="button" class="genre-chip" data-genre="Pendidikan" aria-pressed="false">Pendidikan <span class="genre-chip-count">3</span></button>
+                    <button type="button" class="genre-chip" data-genre="Teknologi" aria-pressed="false">Teknologi <span class="genre-chip-count">2</span></button>
+                    <button type="button" class="genre-chip" data-genre="Kesehatan" aria-pressed="false">Kesehatan <span class="genre-chip-count">2</span></button>
+                    <button type="button" class="genre-chip" data-genre="Lainnya" aria-pressed="false">Lainnya <span class="genre-chip-count">4</span></button>
+                </fieldset>
+
+                <label class="available-toggle" for="only-available">
+                    <input id="only-available" type="checkbox">
+                    <span>Tampilkan hanya buku yang tersedia</span>
+                </label>
+            </div>
+
+            <p class="catalog-count" id="catalog-count" aria-live="polite">Menampilkan 11 dari 11 buku</p>
+
+            <div class="book-grid" id="book-grid">
+                <article class="book-card" data-id="B011" data-genre="Lainnya" data-stok="1">
+                    <figure class="book-cover">
+                        <img src="../foto/buku/atomic-habits.jpg" alt="Sampul buku Atomic Habits" width="400" height="600" loading="lazy" decoding="async">
+                    </figure>
+                    <div class="book-body">
+                        <p class="book-genre">Lainnya</p>
+                        <h3 class="book-title">Atomic Habits</h3>
+                        <p class="book-author">James Clear</p>
+                        <footer class="book-footer">
+                            <p class="stock-badge is-available">Tersedia, stok 1</p>
+                            <a class="book-action" href="peminjaman.html?buku=B011">Ajukan Peminjaman</a>
+                        </footer>
+                    </div>
+                </article>
+
+                <article class="book-card" data-id="B009" data-genre="Lainnya" data-stok="6">
+                    <figure class="book-cover">
+                        <img src="../foto/buku/bumi.jpg" alt="Sampul buku Bumi" width="400" height="600" loading="lazy" decoding="async">
+                    </figure>
+                    <div class="book-body">
+                        <p class="book-genre">Lainnya</p>
+                        <h3 class="book-title">Bumi</h3>
+                        <p class="book-author">Tere Liye</p>
+                        <footer class="book-footer">
+                            <p class="stock-badge is-available">Tersedia, stok 6</p>
+                            <a class="book-action" href="peminjaman.html?buku=B009">Ajukan Peminjaman</a>
+                        </footer>
+                    </div>
+                </article>
+
+                <article class="book-card" data-id="B005" data-genre="Teknologi" data-stok="3">
+                    <figure class="book-cover">
+                        <img src="../foto/buku/clean-code.jpg" alt="Sampul buku Clean Code" width="400" height="600" loading="lazy" decoding="async">
+                    </figure>
+                    <div class="book-body">
+                        <p class="book-genre">Teknologi</p>
+                        <h3 class="book-title">Clean Code</h3>
+                        <p class="book-author">Robert C. Martin</p>
+                        <footer class="book-footer">
+                            <p class="stock-badge is-available">Tersedia, stok 3</p>
+                            <a class="book-action" href="peminjaman.html?buku=B005">Ajukan Peminjaman</a>
+                        </footer>
+                    </div>
+                </article>
+
+                <article class="book-card" data-id="B004" data-genre="Teknologi" data-stok="5">
+                    <figure class="book-cover">
+                        <img src="../foto/buku/dasar-dasar-pemrograman.jpg" alt="Sampul buku Dasar-Dasar Pemrograman" width="400" height="600" loading="lazy" decoding="async">
+                    </figure>
+                    <div class="book-body">
+                        <p class="book-genre">Teknologi</p>
+                        <h3 class="book-title">Dasar-Dasar Pemrograman</h3>
+                        <p class="book-author">Penulis Contoh</p>
+                        <footer class="book-footer">
+                            <p class="stock-badge is-available">Tersedia, stok 5</p>
+                            <a class="book-action" href="peminjaman.html?buku=B004">Ajukan Peminjaman</a>
+                        </footer>
+                    </div>
+                </article>
+
+                <article class="book-card" data-id="B010" data-genre="Lainnya" data-stok="3">
+                    <figure class="book-cover">
+                        <img src="../foto/buku/filosofi-teras.jpg" alt="Sampul buku Filosofi Teras" width="400" height="600" loading="lazy" decoding="async">
+                    </figure>
+                    <div class="book-body">
+                        <p class="book-genre">Lainnya</p>
+                        <h3 class="book-title">Filosofi Teras</h3>
+                        <p class="book-author">Henry Manampiring</p>
+                        <footer class="book-footer">
+                            <p class="stock-badge is-available">Tersedia, stok 3</p>
+                            <a class="book-action" href="peminjaman.html?buku=B010">Ajukan Peminjaman</a>
+                        </footer>
+                    </div>
+                </article>
+
+                <article class="book-card is-unavailable" data-id="B007" data-genre="Kesehatan" data-stok="0">
+                    <figure class="book-cover">
+                        <img src="../foto/buku/how-not-to-die.jpg" alt="Sampul buku How Not to Die" width="400" height="600" loading="lazy" decoding="async">
+                    </figure>
+                    <div class="book-body">
+                        <p class="book-genre">Kesehatan</p>
+                        <h3 class="book-title">How Not to Die</h3>
+                        <p class="book-author">Michael Greger</p>
+                        <footer class="book-footer">
+                            <p class="stock-badge is-empty">Tidak tersedia</p>
+                            <a class="book-action is-disabled" aria-disabled="true">Stok habis</a>
+                        </footer>
+                    </div>
+                </article>
+
+                <article class="book-card" data-id="B008" data-genre="Lainnya" data-stok="4">
+                    <figure class="book-cover">
+                        <img src="../foto/buku/laskar-pelangi.jpg" alt="Sampul buku Laskar Pelangi" width="400" height="600" loading="lazy" decoding="async">
+                    </figure>
+                    <div class="book-body">
+                        <p class="book-genre">Lainnya</p>
+                        <h3 class="book-title">Laskar Pelangi</h3>
+                        <p class="book-author">Andrea Hirata</p>
+                        <footer class="book-footer">
+                            <p class="stock-badge is-available">Tersedia, stok 4</p>
+                            <a class="book-action" href="peminjaman.html?buku=B008">Ajukan Peminjaman</a>
+                        </footer>
+                    </div>
+                </article>
+
+                <article class="book-card is-unavailable" data-id="B003" data-genre="Pendidikan" data-stok="0">
+                    <figure class="book-cover">
+                        <img src="../foto/buku/pedagogi-kaum-tertindas.jpg" alt="Sampul buku Pedagogi Kaum Tertindas" width="400" height="600" loading="lazy" decoding="async">
+                    </figure>
+                    <div class="book-body">
+                        <p class="book-genre">Pendidikan</p>
+                        <h3 class="book-title">Pedagogi Kaum Tertindas</h3>
+                        <p class="book-author">Paulo Freire</p>
+                        <footer class="book-footer">
+                            <p class="stock-badge is-empty">Tidak tersedia</p>
+                            <a class="book-action is-disabled" aria-disabled="true">Stok habis</a>
+                        </footer>
+                    </div>
+                </article>
+
+                <article class="book-card" data-id="B002" data-genre="Pendidikan" data-stok="2">
+                    <figure class="book-cover">
+                        <img src="../foto/buku/sekolah-itu-candu.jpg" alt="Sampul buku Sekolah Itu Candu" width="400" height="600" loading="lazy" decoding="async">
+                    </figure>
+                    <div class="book-body">
+                        <p class="book-genre">Pendidikan</p>
+                        <h3 class="book-title">Sekolah Itu Candu</h3>
+                        <p class="book-author">Roem Topatimasang</p>
+                        <footer class="book-footer">
+                            <p class="stock-badge is-available">Tersedia, stok 2</p>
+                            <a class="book-action" href="peminjaman.html?buku=B002">Ajukan Peminjaman</a>
+                        </footer>
+                    </div>
+                </article>
+
+                <article class="book-card" data-id="B001" data-genre="Pendidikan" data-stok="3">
+                    <figure class="book-cover">
+                        <img src="../foto/buku/totto-chan-gadis-cilik-di-jendela.jpg" alt="Sampul buku Totto-chan: Gadis Cilik di Jendela" width="400" height="600" loading="lazy" decoding="async">
+                    </figure>
+                    <div class="book-body">
+                        <p class="book-genre">Pendidikan</p>
+                        <h3 class="book-title">Totto-chan: Gadis Cilik di Jendela</h3>
+                        <p class="book-author">Tetsuko Kuroyanagi</p>
+                        <footer class="book-footer">
+                            <p class="stock-badge is-available">Tersedia, stok 3</p>
+                            <a class="book-action" href="peminjaman.html?buku=B001">Ajukan Peminjaman</a>
+                        </footer>
+                    </div>
+                </article>
+
+                <article class="book-card" data-id="B006" data-genre="Kesehatan" data-stok="2">
+                    <figure class="book-cover">
+                        <img src="../foto/buku/why-we-sleep.jpg" alt="Sampul buku Why We Sleep" width="400" height="600" loading="lazy" decoding="async">
+                    </figure>
+                    <div class="book-body">
+                        <p class="book-genre">Kesehatan</p>
+                        <h3 class="book-title">Why We Sleep</h3>
+                        <p class="book-author">Matthew Walker</p>
+                        <footer class="book-footer">
+                            <p class="stock-badge is-available">Tersedia, stok 2</p>
+                            <a class="book-action" href="peminjaman.html?buku=B006">Ajukan Peminjaman</a>
+                        </footer>
+                    </div>
+                </article>
+            </div>
+
+            <div class="catalog-empty" id="catalog-empty" hidden>
+                <div class="catalog-empty-icon" aria-hidden="true">▱</div>
+                <h2>Buku tidak ditemukan</h2>
+                <p id="catalog-empty-text">Coba ubah kata kunci atau pilih genre lain.</p>
+                <button type="button" class="catalog-reset" id="catalog-reset">Reset pencarian</button>
+            </div>
+        </section>
+    </main>
+
+    <footer class="site-footer">
+        <section class="footer-cta" aria-labelledby="footer-cta-title">
+            <div class="container footer-cta-inner">
+                <div>
+                    <h2 id="footer-cta-title">Siap meminjam buku hari ini?</h2>
+                    <p>Cari buku favoritmu, cek stoknya, lalu ajukan peminjaman dari mana saja.</p>
+                </div>
+                <div class="footer-cta-actions">
+                    <a class="button button-primary" href="katalog-buku.html">Buka Katalog Buku</a>
+                    <a class="button button-outline" href="daftar.html" data-tampil="tamu">Daftar Sekarang</a>
+                    <a class="button button-outline" href="peminjaman.html" data-tampil="pengguna" hidden>Ajukan Peminjaman</a>
+                    <a class="button button-outline" href="dashboard-petugas.html" data-tampil="petugas" hidden>Buka Dashboard</a>
+                </div>
+            </div>
+        </section>
+
+        <div class="container footer-main">
+            <div class="footer-brand">
+                <a class="brand" href="index.html">
+                    <img class="brand-logo" src="../foto/logo/logo-v-library.png" alt="" width="54" height="43">
+                    <span class="brand-text">
+                        <strong>V-Library</strong>
+                        <small>Sistem Manajemen Perpustakaan</small>
+                    </span>
+                </a>
+                <p class="footer-about">
+                    Sistem manajemen perpustakaan berbasis web untuk mencari buku,
+                    mengecek stok, dan mengajukan peminjaman secara online.
+                </p>
+                <p class="footer-tagline">Ilmu Hari Ini, Inspirasi Esok</p>
+                <ul class="footer-social" aria-label="Sosial media">
+                        <li><a href="https://www.instagram.com/" aria-label="Instagram" title="Instagram" target="_blank" rel="noopener noreferrer"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><rect x="2" y="2" width="20" height="20" rx="5" ry="5"/><path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"/><line x1="17.5" y1="6.5" x2="17.51" y2="6.5"/></svg></a></li>
+                        <li><a href="https://www.youtube.com/" aria-label="YouTube" title="YouTube" target="_blank" rel="noopener noreferrer"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M22.54 6.42a2.78 2.78 0 0 0-1.94-2C18.88 4 12 4 12 4s-6.88 0-8.6.46a2.78 2.78 0 0 0-1.94 2A29 29 0 0 0 1 11.75a29 29 0 0 0 .46 5.33A2.78 2.78 0 0 0 3.4 19c1.72.46 8.6.46 8.6.46s6.88 0 8.6-.46a2.78 2.78 0 0 0 1.94-2 29 29 0 0 0 .46-5.25 29 29 0 0 0-.46-5.33z"/><polygon points="9.75 15.02 15.5 11.75 9.75 8.48 9.75 15.02"/></svg></a></li>
+                        <li><a href="https://www.facebook.com/" aria-label="Facebook" title="Facebook" target="_blank" rel="noopener noreferrer"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M18 2h-3a5 5 0 0 0-5 5v3H7v4h3v8h4v-8h3l1-4h-4V7a1 1 0 0 1 1-1h3z"/></svg></a></li>
+                        <li><a href="https://github.com/" aria-label="GitHub" title="GitHub" target="_blank" rel="noopener noreferrer"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M9 19c-5 1.5-5-2.5-7-3m14 6v-3.87a3.37 3.37 0 0 0-.94-2.61c3.14-.35 6.44-1.54 6.44-7A5.44 5.44 0 0 0 20 4.77 5.07 5.07 0 0 0 19.91 1S18.73.65 16 2.48a13.38 13.38 0 0 0-7 0C6.27.65 5.09 1 5.09 1A5.07 5.07 0 0 0 5 4.77a5.44 5.44 0 0 0-1.5 3.78c0 5.42 3.3 6.61 6.44 7A3.37 3.37 0 0 0 9 18.13V22"/></svg></a></li>
+                        <li><a href="mailto:halo@v-library.example" aria-label="Email" title="Email"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg></a></li>
+                </ul>
+            </div>
+
+            <nav class="footer-col" aria-labelledby="footer-jelajahi">
+                <h2 id="footer-jelajahi">Jelajahi</h2>
+                <ul>
+                    <li><a href="index.html">Beranda</a></li>
+                    <li><a href="katalog-buku.html">Katalog Buku</a></li>
+                    <li data-tampil="tamu"><a href="peminjaman.html">Peminjaman</a></li>
+                    <li data-tampil="pengguna" hidden><a href="peminjaman.html">Peminjaman</a></li>
+                    <li data-tampil="pengguna" hidden><a href="riwayat.html">Riwayat</a></li>
+                    <li data-tampil="petugas" hidden><a href="dashboard-petugas.html">Dashboard</a></li>
+                    <li><a href="tentang-kami.html">Tentang Kami</a></li>
+                </ul>
+            </nav>
+
+            <nav class="footer-col" aria-labelledby="footer-genre">
+                <h2 id="footer-genre">Genre buku</h2>
+                <ul>
+                        <li><a href="katalog-buku.html?genre=Pendidikan">Pendidikan</a></li>
+                        <li><a href="katalog-buku.html?genre=Teknologi">Teknologi</a></li>
+                        <li><a href="katalog-buku.html?genre=Kesehatan">Kesehatan</a></li>
+                        <li><a href="katalog-buku.html?genre=Lainnya">Lainnya</a></li>
+                </ul>
+            </nav>
+
+            <nav class="footer-col" aria-labelledby="footer-bantuan">
+                <h2 id="footer-bantuan">Bantuan</h2>
+                <ul>
+                    <li><a href="tentang-kami.html#keanggotaan">Aturan keanggotaan</a></li>
+                    <li><a href="tentang-kami.html#faq">Pertanyaan umum</a></li>
+                    <li><a href="tentang-kami.html#tim">Tim pengembang</a></li>
+                    <li data-tampil="tamu"><a href="masuk.html">Masuk</a></li>
+                    <li data-tampil="tamu"><a href="daftar.html">Daftar</a></li>
+                </ul>
+            </nav>
+
+            <div class="footer-col footer-contact-col">
+                <h2>Hubungi kami</h2>
+                <address>
+                    <ul class="footer-contact">
+                        <li><span class="icon-wrap"><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg></span><span>Jl. Perpustakaan No. 1, Kota Contoh</span></li>
+                        <li><span class="icon-wrap"><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg></span><span>Senin - Jumat, 08.00 - 16.00 WIB</span></li>
+                        <li><span class="icon-wrap"><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg></span><a href="mailto:halo@v-library.example">halo@v-library.example</a></li>
+                        <li><span class="icon-wrap"><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"/></svg></span><a href="tel:+628000000000">+62 800-0000-0000</a></li>
+                    </ul>
+                </address>
+            </div>
+        </div>
+
+        <div class="footer-bottom">
+            <div class="container footer-bottom-inner">
+                <p>&copy; <span data-tahun>2026</span> V-Library. Dikembangkan oleh Kelompok 02 (Radiant)
+                    untuk mata kuliah Testing dan Implementasi.</p>
+                <a class="footer-top" href="#top">Kembali ke atas <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><line x1="12" y1="19" x2="12" y2="5"/><polyline points="5 12 12 5 19 12"/></svg></a>
+            </div>
+        </div>
+    </footer>
+</body>
+
+</html>
