@@ -14,7 +14,8 @@ window.VLibrary = window.VLibrary || {};
     // Genre mengikuti kategori di Beranda dan filter di Katalog Buku.
     V.GENRES = ["Pendidikan", "Teknologi", "Kesehatan", "Lainnya"];
 
-    // Aturan tingkatan anggota (sesuai dokumen perancangan).
+    // Aturan tingkatan anggota: Silver 4 hari 1 buku, Gold 7 hari 3 buku.
+    // Pinjaman baru baru boleh diajukan setelah masa pinjam sebelumnya habis.
     V.TIERS = {
         Silver: { hari: 4, maksBuku: 1 },
         Gold: { hari: 7, maksBuku: 3 }

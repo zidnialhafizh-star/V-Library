@@ -171,6 +171,35 @@
                 </p>
             </aside>
         </div>
+
+        <dialog class="mg-dialog" id="reject-dialog" aria-labelledby="reject-title">
+            <form id="reject-form" method="dialog" novalidate>
+                <h2 id="reject-title">Tolak pengajuan</h2>
+                <p class="mg-dialog-info" id="reject-info"></p>
+
+                <div class="mg-field">
+                    <label for="reject-reason">Alasan penolakan</label>
+                    <select id="reject-reason">
+                        <option value="stok">Stok buku habis</option>
+                        <option value="aktif">Anggota masih memiliki peminjaman aktif</option>
+                        <option value="lain">Alasan lainnya</option>
+                    </select>
+                </div>
+
+                <div class="mg-field" id="reject-other-field" hidden>
+                    <label for="reject-other">Tulis alasan</label>
+                    <input id="reject-other" type="text" maxlength="150" autocomplete="off">
+                    <p class="field-error" id="reject-error" role="alert" hidden></p>
+                </div>
+
+                <p class="field-hint">Alasan ini akan terlihat oleh anggota di halaman Riwayat.</p>
+
+                <div class="mg-form-actions">
+                    <button type="submit" class="mg-btn mg-btn-danger">Tolak pengajuan</button>
+                    <button type="button" class="mg-btn mg-btn-light" id="reject-cancel">Batal</button>
+                </div>
+            </form>
+        </dialog>
     </main>
 
     <footer class="site-footer">

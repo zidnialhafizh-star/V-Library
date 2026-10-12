@@ -43,6 +43,24 @@
         setText("stat-ditolak", countBy("Ditolak"));
     }
 
+    // Data lama yang disetujui tanpa batasKembali: hitung dari tanggal disetujui
+    // sesuai lama pinjam tingkatannya.
+    function dueDateFallback(loan) {
+        if (!loan.tanggalDisetujui) {
+            return "";
+        }
+
+        const date = new Date(loan.tanggalDisetujui + "T00:00:00");
+        const rule = V.TIERS[loan.tingkatan] || V.TIERS.Silver;
+        date.setDate(date.getDate() + rule.hari);
+
+        return [
+            date.getFullYear(),
+            String(date.getMonth() + 1).padStart(2, "0"),
+            String(date.getDate()).padStart(2, "0")
+        ].join("-");
+    }
+
     function createItem(loan) {
         const item = createElement("li", "history-item");
 
@@ -81,9 +99,32 @@
         });
         booksWrap.appendChild(bookList);
 
+        // Peminjaman yang sudah disetujui menampilkan batas pengembalian.
+        if (loan.status === "Disetujui") {
+            const dueDate = loan.batasKembali || dueDateFallback(loan);
+            const dueWrap = createElement("span", "", "Batas pengembalian: ");
+            const dueTime = createElement("time", "", V.formatDate(dueDate));
+            dueTime.setAttribute("datetime", dueDate || "");
+            const dueStrong = createElement("strong");
+            dueStrong.appendChild(dueTime);
+            dueWrap.appendChild(dueStrong);
+            meta.appendChild(dueWrap);
+        }
+
         item.appendChild(head);
         item.appendChild(meta);
         item.appendChild(booksWrap);
+
+        // Pengajuan ditolak: tampilkan alasan dari petugas.
+        if (loan.status === "Ditolak") {
+            const reason = createElement("p", "history-reject");
+            reason.setAttribute("role", "note");
+            reason.appendChild(createElement("strong", "", "Alasan ditolak: "));
+            reason.appendChild(
+                document.createTextNode(loan.alasanDitolak || "Petugas tidak mencantumkan alasan.")
+            );
+            item.appendChild(reason);
+        }
 
         if (loan.catatan) {
             const note = createElement("p", "history-note");

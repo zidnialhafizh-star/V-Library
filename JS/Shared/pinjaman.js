@@ -115,7 +115,21 @@
         return { ok: true, loan: loan };
     }
 
-    function rejectLoan(id) {
+    // Peminjaman disetujui milik anggota yang masa pinjamnya belum habis.
+    // Masa pinjam habis setelah tanggal batasKembali terlewati.
+    function getActiveLoan(username) {
+        const today = dateAfter(null, 0);
+
+        return getLoans().find(function (loan) {
+            return loan.username === username &&
+                loan.status === "Disetujui" &&
+                Boolean(loan.batasKembali) &&
+                loan.batasKembali >= today;
+        }) || null;
+    }
+
+    // alasan: teks yang ditampilkan ke pengguna di halaman Riwayat.
+    function rejectLoan(id, reason) {
         const loans = getLoans();
         const loan = findLoan(loans, id);
 
@@ -125,6 +139,7 @@
 
         loan.status = "Ditolak";
         loan.tanggalDitolak = dateAfter(null, 0);
+        loan.alasanDitolak = String(reason || "").trim();
 
         return saveLoans(loans)
             ? { ok: true, loan: loan }
@@ -207,6 +222,7 @@
     V.addLoan = addLoan;
     V.approveLoan = approveLoan;
     V.rejectLoan = rejectLoan;
+    V.getActiveLoan = getActiveLoan;
     V.requestExtension = requestExtension;
     V.getExtensions = getExtensions;
     V.approveExtension = approveExtension;

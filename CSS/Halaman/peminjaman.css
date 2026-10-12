@@ -502,3 +502,10 @@
         min-height: 40px;
     }
 }
+
+.member-rule-warning {
+    margin-top: 10px;
+    color: #7d2c22;
+    background: #fdf1f0;
+    border: 1px solid #f3d3cf;
+}

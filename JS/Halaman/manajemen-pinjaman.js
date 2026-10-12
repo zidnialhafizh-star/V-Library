@@ -163,12 +163,86 @@
         V.showAlert(alertBox, text);
     }
 
-    function reject(id) {
-        if (!window.confirm("Tolak pengajuan " + id + "?")) {
+    const dialog = document.getElementById("reject-dialog");
+    const rejectForm = document.getElementById("reject-form");
+    const rejectInfo = document.getElementById("reject-info");
+    const rejectReason = document.getElementById("reject-reason");
+    const otherField = document.getElementById("reject-other-field");
+    const otherInput = document.getElementById("reject-other");
+    const otherError = document.getElementById("reject-error");
+    const cancelButton = document.getElementById("reject-cancel");
+
+    let rejectingId = "";
+    let opener = null;
+
+    // Judul buku dalam pengajuan yang stoknya sudah habis.
+    function emptyTitles(loan) {
+        return loan.buku.filter(function (item) {
+            const book = V.getBookById(item.id);
+            return !book || book.stok < 1;
+        }).map(function (item) {
+            return item.judul;
+        });
+    }
+
+    function reasonText(loan) {
+        if (rejectReason.value === "stok") {
+            const titles = emptyTitles(loan);
+            return titles.length > 0
+                ? "Stok buku habis: " + titles.join(", ") + "."
+                : "Stok buku habis.";
+        }
+
+        if (rejectReason.value === "aktif") {
+            return "Kamu masih memiliki peminjaman aktif. Pinjam lagi setelah masa peminjaman habis.";
+        }
+
+        return otherInput.value.trim();
+    }
+
+    function toggleOther() {
+        const isOther = rejectReason.value === "lain";
+        otherField.hidden = !isOther;
+        otherError.hidden = true;
+
+        if (isOther) {
+            otherInput.focus();
+        }
+    }
+
+    function reject(id, button) {
+        const loan = V.getLoans().find(function (item) {
+            return item.id === id;
+        });
+
+        if (!loan) {
             return;
         }
 
-        const result = V.rejectLoan(id);
+        rejectingId = id;
+        opener = button;
+        rejectInfo.textContent = "Pengajuan " + id + " oleh " + loan.nama + ".";
+        rejectReason.value = emptyTitles(loan).length > 0 ? "stok" : "lain";
+        otherInput.value = "";
+        toggleOther();
+
+        if (typeof dialog.showModal === "function") {
+            dialog.showModal();
+            rejectReason.focus();
+            return;
+        }
+
+        // Peramban lama tanpa <dialog>: minta alasan lewat prompt.
+        const typed = window.prompt("Alasan menolak pengajuan " + id + ":");
+
+        if (typed && typed.trim()) {
+            finishReject(typed.trim());
+        }
+    }
+
+    function finishReject(reason) {
+        const id = rejectingId;
+        const result = V.rejectLoan(id, reason);
 
         render();
 
@@ -183,8 +257,39 @@
             return;
         }
 
-        V.showAlert(alertBox, "Pengajuan " + id + " ditolak.");
+        V.showAlert(alertBox, "Pengajuan " + id + " ditolak. Alasan: " + reason);
     }
+
+    rejectReason.addEventListener("change", toggleOther);
+
+    rejectForm.addEventListener("submit", function (event) {
+        event.preventDefault();
+
+        const loan = V.getLoans().find(function (item) {
+            return item.id === rejectingId;
+        });
+        const reason = loan ? reasonText(loan) : "";
+
+        if (!reason) {
+            otherError.textContent = "Alasan wajib diisi.";
+            otherError.hidden = false;
+            otherInput.focus();
+            return;
+        }
+
+        dialog.close();
+        finishReject(reason);
+    });
+
+    cancelButton.addEventListener("click", function () {
+        dialog.close();
+    });
+
+    dialog.addEventListener("close", function () {
+        if (opener && document.body.contains(opener)) {
+            opener.focus();
+        }
+    });
 
     rows.addEventListener("click", function (event) {
         const button = event.target.closest("button[data-aksi]");
@@ -196,7 +301,7 @@
         if (button.dataset.aksi === "setujui") {
             approve(button.dataset.id);
         } else {
-            reject(button.dataset.id);
+            reject(button.dataset.id, button);
         }
     });
 

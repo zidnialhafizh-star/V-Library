@@ -200,3 +200,15 @@
         min-width: 0;
     }
 }
+
+/* Alasan pengajuan ditolak */
+
+.history-reject {
+    padding: 12px 14px;
+    color: #7d2c22;
+    background: #fdf1f0;
+    border: 1px solid #f3d3cf;
+    border-radius: 12px;
+    font-size: 14px;
+    line-height: 1.6;
+}

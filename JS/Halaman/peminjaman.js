@@ -23,6 +23,7 @@
     const summaryStatus = document.getElementById("summary-status");
 
     const memberRule = document.getElementById("member-rule");
+    const activeNote = document.getElementById("active-loan-note");
 
     const DEFAULT_STATUS = "Menunggu pengajuan";
 
@@ -238,7 +239,34 @@
 
         memberRule.textContent =
             "Anggota " + user.tier + ": maksimal " + rule.maksBuku +
-            " buku per pengajuan dengan lama peminjaman " + rule.hari + " hari.";
+            " buku per pengajuan dengan lama peminjaman " + rule.hari + " hari. " +
+            "Peminjaman baru hanya bisa diajukan setelah masa peminjaman sebelumnya habis; " +
+            "jika belum habis, pengajuan ditolak.";
+
+        const active = V.getActiveLoan(user.username);
+
+        if (active) {
+            activeNote.textContent =
+                "Kamu masih punya peminjaman aktif (" + active.id + ") dengan batas pengembalian " +
+                V.formatDate(active.batasKembali) + ". Pengajuan baru bisa dikirim mulai " +
+                V.formatDate(dayAfter(active.batasKembali)) + ".";
+            activeNote.hidden = false;
+        } else {
+            activeNote.textContent = "";
+            activeNote.hidden = true;
+        }
+    }
+
+    // Hari setelah tanggal "YYYY-MM-DD".
+    function dayAfter(value) {
+        const date = new Date(value + "T00:00:00");
+        date.setDate(date.getDate() + 1);
+
+        return [
+            date.getFullYear(),
+            String(date.getMonth() + 1).padStart(2, "0"),
+            String(date.getDate()).padStart(2, "0")
+        ].join("-");
     }
 
     function refresh() {
@@ -254,6 +282,16 @@
 
         // Baca ulang stok terbaru sebelum memeriksa.
         books = V.getBooks();
+
+        const active = V.getActiveLoan(user.username);
+
+        if (active) {
+            errors.push(
+                "Pengajuan ditolak: masa peminjaman " + active.id + " belum habis (batas pengembalian " +
+                V.formatDate(active.batasKembali) + "). Kamu bisa meminjam lagi mulai " +
+                V.formatDate(dayAfter(active.batasKembali)) + "."
+            );
+        }
 
         const ids = getSelectedIds();
 

@@ -313,3 +313,35 @@
         width: 100%;
     }
 }
+
+/* Dialog alasan penolakan */
+
+.mg-dialog {
+    width: min(460px, calc(100% - 32px));
+    margin: auto;
+    padding: 24px;
+    color: var(--text);
+    background: var(--white);
+    border: 1px solid var(--blue-100);
+    border-radius: var(--radius-md);
+    box-shadow: 0 20px 50px rgba(13, 59, 112, 0.3);
+}
+
+.mg-dialog::backdrop {
+    background: rgba(13, 59, 112, 0.45);
+}
+
+.mg-dialog h2 {
+    color: var(--navy-900);
+    font-size: 20px;
+}
+
+.mg-dialog-info {
+    margin: 6px 0 18px;
+    color: var(--muted);
+    font-size: 14px;
+}
+
+.mg-dialog .field-hint {
+    margin-bottom: 18px;
+}

@@ -357,3 +357,8 @@
         height: 170px;
     }
 }
+
+.book-cover span {
+    font-weight: 700;
+    line-height: 1;
+}
