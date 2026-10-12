@@ -191,75 +191,6 @@
         }
     }
 
-    // Buat kartu untuk buku yang ditambah petugas (belum ada di HTML).
-    // Tanpa foto sampul: sampul memakai blok warna genre dengan inisial judul.
-    function createBookCard(book) {
-        const card = V.createElement("article", "book-card");
-        card.dataset.id = book.id;
-        card.dataset.genre = book.genre;
-        card.dataset.stok = String(book.stok);
-
-        const cover = V.createElement("figure", "book-cover");
-        const initial = V.createElement("span", "", String(book.judul).trim().charAt(0).toUpperCase());
-        initial.setAttribute("aria-hidden", "true");
-        cover.appendChild(initial);
-
-        const body = V.createElement("div", "book-body");
-        body.appendChild(V.createElement("p", "book-genre", book.genre));
-        body.appendChild(V.createElement("h3", "book-title", book.judul));
-        body.appendChild(V.createElement("p", "book-author", book.penulis));
-
-        const footer = V.createElement("footer", "book-footer");
-        footer.appendChild(V.createElement("p", "stock-badge"));
-        footer.appendChild(V.createElement("a", "book-action"));
-        body.appendChild(footer);
-
-        card.appendChild(cover);
-        card.appendChild(body);
-
-        return card;
-    }
-
-    // Samakan isi grid katalog dengan data buku: tambah kartu buku baru,
-    // buang kartu buku yang sudah dihapus, lalu urutkan menurut judul.
-    function lengkapiKatalog(grid) {
-        const books = getBooks();
-        const known = {};
-
-        Array.prototype.slice.call(grid.querySelectorAll(".book-card[data-id]")).forEach(function (card) {
-            const book = books.find(function (candidate) {
-                return candidate.id === card.dataset.id;
-            });
-
-            if (!book) {
-                card.remove();
-                return;
-            }
-
-            // Judul, penulis, dan genre mengikuti hasil edit petugas.
-            card.dataset.genre = book.genre;
-            card.querySelector(".book-genre").textContent = book.genre;
-            card.querySelector(".book-title").textContent = book.judul;
-            card.querySelector(".book-author").textContent = book.penulis;
-            known[book.id] = true;
-        });
-
-        books.forEach(function (book) {
-            if (!known[book.id]) {
-                grid.appendChild(createBookCard(book));
-            }
-        });
-
-        Array.prototype.slice.call(grid.querySelectorAll(".book-card"))
-            .sort(function (a, b) {
-                return a.querySelector(".book-title").textContent
-                    .localeCompare(b.querySelector(".book-title").textContent, "id");
-            })
-            .forEach(function (card) {
-                grid.appendChild(card);
-            });
-    }
-
     function sinkronkanKartu(root) {
         const user = V.getCurrentUser();
 
@@ -277,6 +208,5 @@
     V.addBook = addBook;
     V.updateBook = updateBook;
     V.deleteBook = deleteBook;
-    V.lengkapiKatalog = lengkapiKatalog;
     V.sinkronkanKartu = sinkronkanKartu;
 })(window.VLibrary);
