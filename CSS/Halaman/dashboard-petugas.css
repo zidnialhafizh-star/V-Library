@@ -1,0 +1,123 @@
+.dash-main {
+    display: grid;
+    gap: 24px;
+    padding-bottom: 70px;
+}
+
+.dash-stats {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 18px;
+}
+
+.dash-stat {
+    display: flex;
+    flex-direction: column-reverse;
+    gap: 2px;
+    padding: 20px;
+    text-align: center;
+    background: var(--white);
+    border: 1px solid var(--blue-100);
+    border-radius: var(--radius-md);
+    box-shadow: 0 8px 24px rgba(13, 59, 112, 0.08);
+}
+
+.dash-stat dd {
+    color: var(--navy-800);
+    font-size: 32px;
+    line-height: 1.2;
+}
+
+.dash-stat dt {
+    color: var(--muted);
+    font-size: 14px;
+}
+
+.dash-card {
+    padding: 28px;
+    background: var(--white);
+    border: 1px solid var(--blue-100);
+    border-radius: var(--radius-lg);
+    box-shadow: var(--shadow);
+}
+
+.dash-card h2 {
+    margin-bottom: 16px;
+    color: var(--navy-900);
+    font-size: 20px;
+}
+
+.dash-table-wrap {
+    overflow-x: auto;
+}
+
+.dash-table {
+    width: 100%;
+    min-width: 560px;
+    border-collapse: collapse;
+    font-size: 14px;
+}
+
+.dash-table th {
+    padding: 10px 12px;
+    text-align: left;
+    color: var(--muted);
+    border-bottom: 1px solid var(--blue-100);
+    font-size: 13px;
+}
+
+.dash-table td {
+    padding: 12px;
+    border-bottom: 1px solid var(--blue-100);
+    vertical-align: top;
+}
+
+.dash-table td:first-child {
+    color: var(--navy-900);
+    font-weight: 700;
+}
+
+.dash-empty {
+    padding: 28px 0 8px;
+    text-align: center;
+    color: var(--muted);
+}
+
+.dash-note {
+    display: flex;
+    align-items: flex-start;
+    gap: 12px;
+    padding: 16px 18px;
+    background: var(--blue-100);
+    border-radius: var(--radius-md);
+}
+
+.dash-note-icon {
+    width: 22px;
+    height: 22px;
+    flex-shrink: 0;
+    display: grid;
+    place-items: center;
+    color: var(--white);
+    background: var(--blue-700);
+    border-radius: 50%;
+    font-size: 13px;
+    font-weight: 700;
+}
+
+.dash-note p {
+    color: var(--text);
+    font-size: 14px;
+}
+
+@media (max-width: 860px) {
+    .dash-stats {
+        grid-template-columns: repeat(2, 1fr);
+    }
+}
+
+@media (max-width: 560px) {
+    .dash-card {
+        padding: 20px;
+    }
+}

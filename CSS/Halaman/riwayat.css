@@ -1,0 +1,202 @@
+.history-layout {
+    display: grid;
+    gap: 24px;
+    padding-bottom: 70px;
+}
+
+.history-stats {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 18px;
+}
+
+.history-stat {
+    display: flex;
+    flex-direction: column-reverse;
+    gap: 2px;
+    padding: 20px;
+    text-align: center;
+    background: var(--white);
+    border: 1px solid var(--blue-100);
+    border-radius: var(--radius-md);
+    box-shadow: 0 8px 24px rgba(13, 59, 112, 0.08);
+}
+
+.history-stat dd {
+    color: var(--navy-800);
+    font-size: 32px;
+    line-height: 1.2;
+    font-weight: 700;
+}
+
+.history-stat dt {
+    color: var(--muted);
+    font-size: 14px;
+}
+
+.history-card {
+    padding: 28px;
+    background: var(--white);
+    border: 1px solid var(--blue-100);
+    border-radius: var(--radius-lg);
+    box-shadow: var(--shadow);
+}
+
+.history-heading {
+    display: flex;
+    align-items: flex-end;
+    justify-content: space-between;
+    gap: 16px;
+    padding-bottom: 18px;
+    border-bottom: 1px solid var(--blue-100);
+}
+
+.history-heading h2 {
+    color: var(--navy-900);
+    font-size: 22px;
+}
+
+.history-heading p {
+    color: var(--muted);
+    font-size: 14px;
+}
+
+.history-filter {
+    display: grid;
+    gap: 6px;
+    min-width: 200px;
+}
+
+.history-filter label {
+    color: var(--navy-900);
+    font-size: 14px;
+    font-weight: 600;
+}
+
+.history-filter select {
+    min-height: 44px;
+    padding: 8px 14px;
+    color: var(--text);
+    background: var(--blue-50);
+    border: 1px solid var(--blue-100);
+    border-radius: 12px;
+    font-size: 15px;
+}
+
+.history-filter select:focus {
+    outline: 0;
+    background: var(--white);
+    border-color: var(--blue-500);
+    box-shadow: 0 0 0 3px rgba(78, 157, 224, 0.2);
+}
+
+/* Daftar pengajuan */
+
+.history-list {
+    display: grid;
+    gap: 16px;
+    margin-top: 22px;
+    list-style: none;
+}
+
+.history-item {
+    display: grid;
+    gap: 14px;
+    padding: 20px;
+    background: var(--blue-50);
+    border: 1px solid var(--blue-100);
+    border-radius: var(--radius-md);
+}
+
+.history-item-head {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
+    gap: 10px;
+}
+
+.history-item-id {
+    color: var(--navy-900);
+    font-size: 17px;
+    font-weight: 700;
+}
+
+.history-item-meta {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px 24px;
+    color: var(--muted);
+    font-size: 14px;
+}
+
+.history-item-meta strong {
+    color: var(--navy-900);
+    font-weight: 600;
+}
+
+.history-books-title {
+    margin-bottom: 6px;
+    color: var(--muted);
+    font-size: 13px;
+    font-weight: 600;
+}
+
+.history-books {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    list-style: none;
+}
+
+.history-books li {
+    padding: 4px 14px;
+    color: var(--blue-700);
+    background: var(--white);
+    border: 1px solid var(--blue-100);
+    border-radius: 999px;
+    font-size: 14px;
+    font-weight: 600;
+}
+
+.history-note {
+    color: var(--text);
+    font-size: 14px;
+}
+
+.history-note span {
+    color: var(--muted);
+    font-weight: 600;
+}
+
+/* Keadaan kosong */
+
+.history-empty {
+    display: grid;
+    justify-items: center;
+    gap: 16px;
+    padding: 40px 0 16px;
+    text-align: center;
+    color: var(--muted);
+}
+
+@media (max-width: 860px) {
+    .history-stats {
+        grid-template-columns: repeat(2, 1fr);
+    }
+}
+
+@media (max-width: 560px) {
+    .history-card {
+        padding: 20px;
+    }
+
+    .history-heading {
+        flex-direction: column;
+        align-items: stretch;
+    }
+
+    .history-filter {
+        min-width: 0;
+    }
+}

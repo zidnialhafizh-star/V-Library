@@ -1,0 +1,315 @@
+.mg-main {
+    display: grid;
+    gap: 24px;
+    padding-bottom: 70px;
+}
+
+/* Pesan hasil aksi */
+
+.mg-alert {
+    padding: 14px 16px;
+    border: 1px solid transparent;
+    border-radius: 12px;
+    font-size: 14px;
+    line-height: 1.6;
+}
+
+.mg-alert-success {
+    color: #1d5a3a;
+    background: #eef9f2;
+    border-color: #cdebd9;
+}
+
+.mg-alert-error {
+    color: #7d2c22;
+    background: #fdf1f0;
+    border-color: #f3d3cf;
+}
+
+/* Ringkasan */
+
+.mg-stats {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 18px;
+}
+
+.mg-stat {
+    display: flex;
+    flex-direction: column-reverse;
+    gap: 2px;
+    padding: 20px;
+    text-align: center;
+    background: var(--white);
+    border: 1px solid var(--blue-100);
+    border-radius: var(--radius-md);
+    box-shadow: 0 8px 24px rgba(13, 59, 112, 0.08);
+}
+
+.mg-stat dd {
+    color: var(--navy-800);
+    font-size: 32px;
+    line-height: 1.2;
+}
+
+.mg-stat dt {
+    color: var(--muted);
+    font-size: 14px;
+}
+
+/* Kartu */
+
+.mg-card {
+    padding: 28px;
+    background: var(--white);
+    border: 1px solid var(--blue-100);
+    border-radius: var(--radius-lg);
+    box-shadow: var(--shadow);
+}
+
+.mg-card h2 {
+    margin-bottom: 16px;
+    color: var(--navy-900);
+    font-size: 20px;
+}
+
+.mg-card-head {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 12px;
+}
+
+.mg-count {
+    margin: -8px 0 14px;
+    color: var(--muted);
+    font-size: 14px;
+}
+
+/* Formulir */
+
+.mg-form-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 0 18px;
+}
+
+.mg-form-info {
+    margin-bottom: 14px;
+    color: var(--muted);
+    font-size: 14px;
+}
+
+.mg-form-info strong {
+    color: var(--navy-900);
+}
+
+.mg-field {
+    display: grid;
+    align-content: start;
+    gap: 6px;
+    margin-bottom: 18px;
+}
+
+.mg-field label,
+.mg-filter label {
+    color: var(--navy-900);
+    font-size: 14px;
+    font-weight: 600;
+}
+
+.mg-field input,
+.mg-field select,
+.mg-filter select {
+    width: 100%;
+    min-height: 46px;
+    padding: 9px 14px;
+    color: var(--text);
+    background: var(--blue-50);
+    border: 1px solid var(--blue-100);
+    border-radius: 12px;
+    font-size: 15px;
+}
+
+.mg-field input:focus,
+.mg-field select:focus,
+.mg-filter select:focus {
+    outline: 0;
+    background: var(--white);
+    border-color: var(--blue-500);
+    box-shadow: 0 0 0 3px rgba(78, 157, 224, 0.2);
+}
+
+.mg-field.has-error input,
+.mg-field.has-error select {
+    background: #fffafa;
+    border-color: #d9857b;
+}
+
+.field-hint {
+    color: var(--muted);
+    font-size: 12px;
+}
+
+.field-error {
+    color: var(--stock-out-text);
+    font-size: 13px;
+    font-weight: 600;
+}
+
+.mg-form-actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+}
+
+.mg-filter {
+    display: grid;
+    gap: 4px;
+    min-width: 180px;
+}
+
+/* Tombol */
+
+.mg-btn {
+    min-height: 40px;
+    padding: 8px 20px;
+    border: 1px solid transparent;
+    border-radius: 999px;
+    cursor: pointer;
+    font-size: 14px;
+    font-weight: 600;
+    transition: background 180ms ease;
+}
+
+.mg-btn-primary {
+    color: var(--white);
+    background: var(--navy-800);
+}
+
+.mg-btn-primary:hover {
+    background: var(--navy-900);
+}
+
+.mg-btn-light {
+    color: var(--navy-800);
+    background: var(--blue-100);
+}
+
+.mg-btn-light:hover {
+    background: var(--blue-300);
+}
+
+.mg-btn-danger {
+    color: var(--stock-out-text);
+    background: var(--white);
+    border-color: #f0cdca;
+}
+
+.mg-btn-danger:hover {
+    background: var(--stock-out-bg);
+}
+
+/* Tabel */
+
+.mg-table-wrap {
+    overflow-x: auto;
+}
+
+.mg-table {
+    width: 100%;
+    min-width: 680px;
+    border-collapse: collapse;
+    font-size: 14px;
+}
+
+.mg-table th {
+    padding: 10px 12px;
+    text-align: left;
+    color: var(--muted);
+    border-bottom: 1px solid var(--blue-100);
+    font-size: 13px;
+}
+
+.mg-table td {
+    padding: 12px;
+    border-bottom: 1px solid var(--blue-100);
+    vertical-align: top;
+}
+
+.mg-table td:first-child {
+    color: var(--navy-900);
+    font-weight: 700;
+}
+
+.mg-table .mg-actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+}
+
+.mg-table .mg-btn {
+    min-height: 34px;
+    padding: 5px 14px;
+    font-size: 13px;
+}
+
+.mg-table tr.is-editing td {
+    background: var(--blue-50);
+}
+
+.mg-empty {
+    padding: 28px 0 8px;
+    text-align: center;
+    color: var(--muted);
+}
+
+/* Catatan */
+
+.mg-note {
+    display: flex;
+    align-items: flex-start;
+    gap: 12px;
+    padding: 16px 18px;
+    background: var(--blue-100);
+    border-radius: var(--radius-md);
+}
+
+.mg-note-icon {
+    width: 22px;
+    height: 22px;
+    flex-shrink: 0;
+    display: grid;
+    place-items: center;
+    color: var(--white);
+    background: var(--blue-700);
+    border-radius: 50%;
+    font-size: 13px;
+    font-weight: 700;
+}
+
+.mg-note p {
+    color: var(--text);
+    font-size: 14px;
+}
+
+@media (max-width: 860px) {
+    .mg-stats {
+        grid-template-columns: repeat(2, 1fr);
+    }
+}
+
+@media (max-width: 560px) {
+    .mg-card {
+        padding: 20px;
+    }
+
+    .mg-form-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .mg-filter {
+        width: 100%;
+    }
+}
