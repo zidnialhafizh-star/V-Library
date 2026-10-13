@@ -206,8 +206,12 @@
     background: linear-gradient(135deg, var(--blue-700), var(--blue-300));
 }
 
-.book-card[data-genre="Lainnya"] .book-cover {
+.book-card[data-genre="Fiksi"] .book-cover {
     background: linear-gradient(135deg, var(--navy-800), var(--blue-300));
+}
+
+.book-card[data-genre="Pengembangan Diri"] .book-cover {
+    background: linear-gradient(135deg, var(--navy-900), var(--blue-300));
 }
 
 .book-body {

@@ -12,7 +12,7 @@ window.VLibrary = window.VLibrary || {};
     };
 
     // Genre mengikuti kategori di Beranda dan filter di Katalog Buku.
-    V.GENRES = ["Pendidikan", "Teknologi", "Kesehatan", "Lainnya"];
+    V.GENRES = ["Pendidikan", "Teknologi", "Kesehatan", "Fiksi", "Pengembangan Diri"];
 
     // Aturan tingkatan anggota: Silver 4 hari 1 buku, Gold 7 hari 3 buku.
     // Pinjaman baru baru boleh diajukan setelah masa pinjam sebelumnya habis.

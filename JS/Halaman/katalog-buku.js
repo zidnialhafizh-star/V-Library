@@ -18,8 +18,7 @@
         return;
     }
 
-    // Tambahkan kartu buku baru dari Manajemen Buku sebelum data kartu dibaca.
-    V.lengkapiKatalog(grid);
+    // Samakan stok dan tombol aksi kartu dengan data terbaru sebelum kartu dibaca.
     V.sinkronkanKartu(grid);
 
     // Data pencarian dibaca dari kartu yang ada di HTML.

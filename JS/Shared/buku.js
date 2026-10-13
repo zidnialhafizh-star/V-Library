@@ -10,17 +10,44 @@
         { id: "B005", judul: "Clean Code", penulis: "Robert C. Martin", genre: "Teknologi", stok: 3 },
         { id: "B006", judul: "Why We Sleep", penulis: "Matthew Walker", genre: "Kesehatan", stok: 2 },
         { id: "B007", judul: "How Not to Die", penulis: "Michael Greger", genre: "Kesehatan", stok: 0 },
-        { id: "B008", judul: "Laskar Pelangi", penulis: "Andrea Hirata", genre: "Lainnya", stok: 4 },
-        { id: "B009", judul: "Bumi", penulis: "Tere Liye", genre: "Lainnya", stok: 6 },
-        { id: "B010", judul: "Filosofi Teras", penulis: "Henry Manampiring", genre: "Lainnya", stok: 3 },
-        { id: "B011", judul: "Atomic Habits", penulis: "James Clear", genre: "Lainnya", stok: 1 }
+        { id: "B008", judul: "Laskar Pelangi", penulis: "Andrea Hirata", genre: "Fiksi", stok: 4 },
+        { id: "B009", judul: "Bumi", penulis: "Tere Liye", genre: "Fiksi", stok: 6 },
+        { id: "B010", judul: "Filosofi Teras", penulis: "Henry Manampiring", genre: "Pengembangan Diri", stok: 3 },
+        { id: "B011", judul: "Atomic Habits", penulis: "James Clear", genre: "Pengembangan Diri", stok: 1 }
     ];
+
+    // Data lama di localStorage mungkin masih memakai genre yang sudah dihapus
+    // (misalnya "Lainnya"). Buku contoh dikembalikan ke genre barunya.
+    function migrateGenres(books) {
+        let changed = false;
+
+        books.forEach(function (book) {
+            if (V.GENRES.indexOf(book.genre) !== -1) {
+                return;
+            }
+
+            const sample = SAMPLE_BOOKS.find(function (item) {
+                return item.id === book.id;
+            });
+
+            if (sample) {
+                book.genre = sample.genre;
+                changed = true;
+            }
+        });
+
+        if (changed) {
+            V.writeStorage(V.KEYS.buku, books);
+        }
+
+        return books;
+    }
 
     function getBooks() {
         const stored = V.readStorage(V.KEYS.buku);
 
         if (Array.isArray(stored)) {
-            return stored;
+            return migrateGenres(stored);
         }
 
         const copy = JSON.parse(JSON.stringify(SAMPLE_BOOKS));
