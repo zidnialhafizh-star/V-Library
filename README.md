@@ -80,6 +80,16 @@ Peminjaman biasa, yang mengarahkan mereka ke halaman Masuk.
 Setelah mengubah `SAMPLE_BOOKS`, pakai tombol "Reset data demo" di halaman
 Masuk supaya data lama di localStorage terganti.
 
+## Perpanjangan peminjaman (sisi anggota)
+Tidak ada halaman terpisah. Fiturnya ada di `riwayat.html`, bagian
+**Perpanjang Peminjaman** (`#perpanjangan`), dan dikerjakan oleh `riwayat.js`.
+Bagian itu menampilkan peminjaman berstatus Disetujui yang batas pengembaliannya
+belum lewat, lengkap dengan tombol **Ajukan perpanjangan**. Tombol memanggil
+`V.requestExtension(idPinjaman, username)`; pengajuannya kemudian diproses petugas
+di Manajemen Perpanjang. Status perpanjangan juga tampil di daftar riwayat.
+Aturan: satu kali per peminjaman (`V.MAKS_PERPANJANGAN`), pengajuan yang ditolak
+boleh diajukan ulang, dan peminjaman yang sudah lewat batas tidak bisa diperpanjang.
+
 ## Daftar dan masuk sebagai petugas
 Halaman Daftar dan Masuk punya pilihan **Pengguna / Petugas**. Pilihan Petugas
 menampilkan kolom **Kode petugas**; kodenya `6969` (`V.KODE_PETUGAS` di

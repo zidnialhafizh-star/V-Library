@@ -15,16 +15,36 @@
     const emptyAction = document.getElementById("history-empty-action");
     const filter = document.getElementById("status-filter");
 
+    const extendList = document.getElementById("extend-list");
+    const extendInfo = document.getElementById("extend-info");
+    const extendEmpty = document.getElementById("extend-empty");
+    const extendAlert = document.getElementById("extend-alert");
+
     const createElement = V.createElement;
 
     // Hanya pengajuan milik pengguna ini, yang terbaru di atas.
-    const myLoans = V.getLoans()
-        .filter(function (loan) {
-            return loan.username === user.username;
-        })
-        .sort(function (a, b) {
-            return String(b.dibuatPada || "").localeCompare(String(a.dibuatPada || ""));
-        });
+    // Dibaca ulang setelah ada perubahan (misalnya pengajuan perpanjangan).
+    let myLoans = [];
+
+    function loadLoans() {
+        myLoans = V.getLoans()
+            .filter(function (loan) {
+                return loan.username === user.username;
+            })
+            .sort(function (a, b) {
+                return String(b.dibuatPada || "").localeCompare(String(a.dibuatPada || ""));
+            });
+    }
+
+    function getLocalToday() {
+        const now = new Date();
+
+        return [
+            now.getFullYear(),
+            String(now.getMonth() + 1).padStart(2, "0"),
+            String(now.getDate()).padStart(2, "0")
+        ].join("-");
+    }
 
     function countBy(status) {
         return myLoans.filter(function (loan) {
@@ -109,6 +129,18 @@
             dueStrong.appendChild(dueTime);
             dueWrap.appendChild(dueStrong);
             meta.appendChild(dueWrap);
+
+            if (loan.perpanjangan && loan.perpanjangan.status) {
+                const extWrap = createElement("span", "", "Perpanjangan: ");
+                extWrap.appendChild(
+                    createElement(
+                        "span",
+                        "status-pill is-" + loan.perpanjangan.status.toLowerCase(),
+                        loan.perpanjangan.status
+                    )
+                );
+                meta.appendChild(extWrap);
+            }
         }
 
         item.appendChild(head);
@@ -135,6 +167,210 @@
 
         return item;
     }
+
+    /* ---------- Perpanjangan peminjaman ---------- */
+
+    const EXTEND_ERRORS = {
+        "belum-disetujui": "Peminjaman ini belum disetujui, jadi belum bisa diperpanjang.",
+        "bukan-milik": "Peminjaman ini bukan milik akunmu.",
+        "terlambat": "Masa peminjaman sudah habis, jadi tidak bisa diperpanjang. Kembalikan bukunya ke perpustakaan.",
+        "batas-tercapai": "Perpanjangan hanya bisa satu kali untuk setiap peminjaman.",
+        "sudah-menunggu": "Pengajuan perpanjangan untuk peminjaman ini masih menunggu keputusan petugas.",
+        "gagal-simpan": "Pengajuan gagal disimpan di browser ini. Periksa pengaturan penyimpanan lalu coba lagi."
+    };
+
+    // Peminjaman disetujui yang batas pengembaliannya belum lewat.
+    function getActiveLoans() {
+        const today = getLocalToday();
+
+        return myLoans.filter(function (loan) {
+            return loan.status === "Disetujui" &&
+                Boolean(loan.batasKembali) &&
+                loan.batasKembali >= today;
+        });
+    }
+
+    // "bisa", "ditolak" (boleh diajukan lagi), "menunggu", atau "habis".
+    function getExtensionState(loan) {
+        const extension = loan.perpanjangan;
+
+        if ((loan.jumlahPerpanjang || 0) >= V.MAKS_PERPANJANGAN) {
+            return "habis";
+        }
+
+        if (extension && extension.status === "Menunggu") {
+            return "menunggu";
+        }
+
+        if (extension && extension.status === "Ditolak") {
+            return "ditolak";
+        }
+
+        return "bisa";
+    }
+
+    function createDateStrong(label, value) {
+        const wrap = createElement("span", "", label);
+        const strong = createElement("strong");
+        const time = createElement("time", "", V.formatDate(value));
+        time.setAttribute("datetime", value || "");
+        strong.appendChild(time);
+        wrap.appendChild(strong);
+
+        return wrap;
+    }
+
+    function createExtendItem(loan) {
+        const state = getExtensionState(loan);
+        const extension = loan.perpanjangan;
+        const item = createElement("li", "history-item");
+
+        const head = createElement("div", "history-item-head");
+        head.appendChild(createElement("h3", "history-item-id", "Pengajuan " + loan.id));
+        item.appendChild(head);
+
+        const meta = createElement("p", "history-item-meta");
+        meta.appendChild(createDateStrong("Batas pengembalian: ", loan.batasKembali));
+
+        const statusWrap = createElement("span", "", "Status perpanjangan: ");
+        if (extension && extension.status) {
+            statusWrap.appendChild(
+                createElement(
+                    "span",
+                    "status-pill is-" + extension.status.toLowerCase(),
+                    extension.status
+                )
+            );
+        } else {
+            statusWrap.appendChild(createElement("strong", "", "Belum diajukan"));
+        }
+        meta.appendChild(statusWrap);
+
+        if (state === "bisa" || state === "ditolak") {
+            meta.appendChild(
+                createDateStrong("Batas baru jika disetujui: ", V.getExtendedDueDate(loan))
+            );
+        }
+
+        item.appendChild(meta);
+
+        const books = Array.isArray(loan.buku) ? loan.buku : [];
+        const booksWrap = createElement("div");
+        booksWrap.appendChild(
+            createElement("p", "history-books-title", "Buku yang dipinjam (" + books.length + ")")
+        );
+        const bookList = createElement("ul", "history-books");
+        books.forEach(function (book) {
+            bookList.appendChild(createElement("li", "", book.judul));
+        });
+        booksWrap.appendChild(bookList);
+        item.appendChild(booksWrap);
+
+        if (state === "ditolak") {
+            const reason = createElement("p", "history-reject");
+            reason.setAttribute("role", "note");
+            reason.appendChild(
+                document.createTextNode(
+                    "Pengajuan perpanjangan sebelumnya ditolak petugas pada " +
+                    V.formatDate(extension.tanggalKeputusan) +
+                    ". Kamu masih bisa mengajukan ulang."
+                )
+            );
+            item.appendChild(reason);
+        }
+
+        const action = createElement("div", "extend-action");
+
+        if (state === "bisa" || state === "ditolak") {
+            const label = state === "ditolak" ? "Ajukan ulang perpanjangan" : "Ajukan perpanjangan";
+            const button = createElement("button", "button button-navy", label);
+            button.type = "button";
+            button.dataset.id = loan.id;
+            button.setAttribute("aria-label", label + " " + loan.id);
+            action.appendChild(button);
+        } else if (state === "menunggu") {
+            action.appendChild(
+                createElement(
+                    "p",
+                    "extend-hint",
+                    "Pengajuan dikirim pada " + V.formatDate(extension.tanggalPengajuan) +
+                    ". Menunggu keputusan petugas."
+                )
+            );
+        } else {
+            action.appendChild(
+                createElement(
+                    "p",
+                    "extend-hint",
+                    "Perpanjangan sudah digunakan. Batas maksimal " + V.MAKS_PERPANJANGAN +
+                    " kali untuk setiap peminjaman."
+                )
+            );
+        }
+
+        item.appendChild(action);
+
+        return item;
+    }
+
+    function renderExtensions() {
+        const active = getActiveLoans();
+
+        extendList.textContent = "";
+        active.forEach(function (loan) {
+            extendList.appendChild(createExtendItem(loan));
+        });
+
+        if (active.length === 0) {
+            extendInfo.textContent = "Tidak ada peminjaman aktif.";
+            extendEmpty.textContent =
+                "Belum ada peminjaman yang bisa diperpanjang. Perpanjangan hanya " +
+                "tersedia untuk peminjaman yang sudah disetujui dan belum melewati " +
+                "batas pengembalian.";
+            extendEmpty.hidden = false;
+        } else {
+            extendInfo.textContent = active.length + " peminjaman aktif.";
+            extendEmpty.hidden = true;
+        }
+    }
+
+    function showExtendAlert(text, type) {
+        extendAlert.textContent = text;
+        extendAlert.className = "history-alert history-alert-" + type;
+        extendAlert.setAttribute("role", type === "error" ? "alert" : "status");
+        extendAlert.hidden = false;
+        extendAlert.focus();
+    }
+
+    // Satu pendengar untuk semua tombol "Ajukan perpanjangan".
+    extendList.addEventListener("click", function (event) {
+        const button = event.target.closest("button[data-id]");
+
+        if (!button) {
+            return;
+        }
+
+        const id = button.dataset.id;
+        const result = V.requestExtension(id, user.username);
+
+        loadLoans();
+        renderStats();
+        renderExtensions();
+        render();
+
+        if (result.ok) {
+            showExtendAlert(
+                "Pengajuan perpanjangan " + id + " terkirim. " +
+                "Petugas akan memeriksa dan memberi keputusan.",
+                "success"
+            );
+        } else {
+            showExtendAlert(
+                EXTEND_ERRORS[result.error] || "Pengajuan perpanjangan belum dapat dikirim.",
+                "error"
+            );
+        }
+    });
 
     function render() {
         const status = filter.value;
@@ -178,6 +414,8 @@
 
     filter.addEventListener("change", render);
 
+    loadLoans();
     renderStats();
+    renderExtensions();
     render();
 })();

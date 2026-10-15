@@ -212,3 +212,57 @@
     font-size: 14px;
     line-height: 1.6;
 }
+
+/* Perpanjangan peminjaman */
+
+.extend-action {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 12px;
+}
+
+.extend-hint {
+    color: var(--muted);
+    font-size: 14px;
+}
+
+.extend-rule {
+    margin-top: 20px;
+    color: var(--muted);
+    font-size: 14px;
+    line-height: 1.6;
+}
+
+.extend-empty {
+    margin-top: 22px;
+    padding: 24px 0 4px;
+    text-align: center;
+    color: var(--muted);
+}
+
+.history-alert {
+    margin-top: 18px;
+    padding: 12px 14px;
+    border: 1px solid transparent;
+    border-radius: 12px;
+    font-size: 14px;
+    line-height: 1.6;
+}
+
+.history-alert:focus {
+    outline: 2px solid var(--blue-500);
+    outline-offset: 2px;
+}
+
+.history-alert-success {
+    color: var(--stock-ok-text);
+    background: var(--stock-ok-bg);
+    border-color: #bfe3cd;
+}
+
+.history-alert-error {
+    color: var(--stock-out-text);
+    background: var(--stock-out-bg);
+    border-color: #f3d3cf;
+}

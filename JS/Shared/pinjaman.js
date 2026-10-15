@@ -148,14 +148,29 @@
 
     /* ---------- Perpanjangan (FR-07, FR-12) ---------- */
 
+    // Batas kembali baru jika perpanjangan disetujui (untuk ditampilkan ke pengguna).
+    function getExtendedDueDate(loan) {
+        return dateAfter(loan.batasKembali, loanDays(loan));
+    }
+
     // Pengajuan perpanjangan (dipakai sisi pengguna). Hanya untuk peminjaman
-    // Disetujui yang belum pernah diperpanjang dan tidak sedang menunggu.
-    function requestExtension(id) {
+    // Disetujui yang masa pinjamnya belum habis, belum pernah diperpanjang,
+    // dan tidak sedang menunggu. username (opsional) memastikan peminjaman
+    // itu memang milik pengguna yang sedang login.
+    function requestExtension(id, username) {
         const loans = getLoans();
         const loan = findLoan(loans, id);
 
         if (!loan || loan.status !== "Disetujui") {
             return { ok: false, error: "belum-disetujui" };
+        }
+
+        if (username && loan.username !== username) {
+            return { ok: false, error: "bukan-milik" };
+        }
+
+        if (!loan.batasKembali || loan.batasKembali < dateAfter(null, 0)) {
+            return { ok: false, error: "terlambat" };
         }
 
         if ((loan.jumlahPerpanjang || 0) >= V.MAKS_PERPANJANGAN) {
@@ -224,6 +239,7 @@
     V.rejectLoan = rejectLoan;
     V.getActiveLoan = getActiveLoan;
     V.requestExtension = requestExtension;
+    V.getExtendedDueDate = getExtendedDueDate;
     V.getExtensions = getExtensions;
     V.approveExtension = approveExtension;
     V.rejectExtension = rejectExtension;

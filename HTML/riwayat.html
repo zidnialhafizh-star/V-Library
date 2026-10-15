@@ -4,7 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="description" content="Riwayat pengajuan peminjaman buku di V-Library">
+    <meta name="description" content="Riwayat pengajuan peminjaman dan perpanjangan buku di V-Library">
     <title>V-Library | Riwayat</title>
 
     <link rel="icon" type="image/png" href="../foto/logo/logo-v-library.png">
@@ -100,7 +100,8 @@
                 <h1 id="page-title">Riwayat Peminjaman</h1>
                 <p>
                     Pantau semua pengajuan peminjaman yang pernah kamu kirim,
-                    lengkap dengan status persetujuan dari petugas.
+                    lengkap dengan status persetujuan dari petugas. Peminjaman
+                    yang masih aktif bisa kamu ajukan perpanjangannya di sini.
                 </p>
             </div>
         </section>
@@ -127,6 +128,30 @@
                         <dd id="stat-ditolak">0</dd>
                     </div>
                 </dl>
+            </section>
+
+            <section class="history-card" id="perpanjangan" aria-labelledby="extend-title">
+                <div class="history-heading">
+                    <div>
+                        <h2 id="extend-title">Perpanjang Peminjaman</h2>
+                        <p id="extend-info">Memuat peminjaman aktif...</p>
+                    </div>
+                </div>
+
+                <div class="history-alert" id="extend-alert" tabindex="-1" hidden></div>
+
+                <ul class="history-list" id="extend-list">
+                    <!-- Peminjaman aktif dibuat oleh js/halaman/riwayat.js -->
+                </ul>
+
+                <p class="extend-empty" id="extend-empty" hidden></p>
+
+                <p class="extend-rule">
+                    Perpanjangan bisa diajukan satu kali untuk setiap peminjaman yang
+                    sudah disetujui dan belum melewati batas pengembalian. Jika disetujui
+                    petugas, batas pengembalian bertambah sebesar masa peminjaman sesuai
+                    tingkatan anggotamu.
+                </p>
             </section>
 
             <section class="history-card" aria-labelledby="history-title">
